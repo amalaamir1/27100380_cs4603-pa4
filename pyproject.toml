@@ -12,6 +12,7 @@ dependencies = [
     "langchain-openai>=0.2.0",
     # ─── Databricks integrations (LLM, embeddings, Vector Search) ────────────
     "databricks-langchain>=0.1.0",
+    "databricks-ai-search",
     "databricks-vectorsearch>=0.40",
     "databricks-sdk>=0.23.0",
     # ─── MCP tool server / client ────────────────────────────────────────────
