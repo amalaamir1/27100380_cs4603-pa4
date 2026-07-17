@@ -61,9 +61,9 @@ TODO: graph architecture, routing, deployment choices.
 
 ### Task 1.2 — Planner
 1. What happens when the planner produces steps that depend on each other (e.g., step 3 needs the result of step 1)? How does your architecture handle this?
-   - TODO
+   - The graph executes planner steps sequentially using current_step_index, each specilaist appends its output to step_results, and so a later step can acvcess and use data produced by an earlier step. eg. rag agent retrieves f72023 revenue-> mcp node used val to calculate growth. Handling in architecture: the planner should make dependencies eplicit by stating : "Using ans from {step} in {next_step} , calculating..." . and the executor node needs to have the prev step_results in context for the current step_result iteration
 2. Would a replanning step after each execution improve or hurt performance for this use case? Justify with an example.
-   - TODO
+   - Replanning would hurt performance as it would add one LLM invoke call after each execution. increasing latency, cost, for not all necessary replanning. eg. once revenue retrieved, graph can immediately move onto calculating growth via next node without requiring LLM's reasoning in the middle. adding edges would aldo increase complexity and not allow for modular workflow
 
 ### Task 1.3 — Supervisor
 1. Your supervisor makes a routing decision per step. What is the failure mode if it misroutes? How would you detect and recover from a misroute?
