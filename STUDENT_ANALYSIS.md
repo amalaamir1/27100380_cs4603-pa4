@@ -17,7 +17,8 @@ cp .env.example .env   # then fill in your values
 
 ## Running locally
 
-TODO: how to ingest the corpus, run the graph in `pa4.ipynb`, and test queries.
+Graph has been run inpa4.ipynyb, as outputs are not added in databricks commit, pics and references pasted below:
+
 
 > **Example of the level of detail expected** (replace with your own steps/values):
 >
@@ -45,6 +46,7 @@ TODO: how to ingest the corpus, run the graph in `pa4.ipynb`, and test queries.
 >    | "What is 15% of 2.4 billion?" | 360 million |
 >    | "What was 2023 revenue, and its value after 10% growth?" | ¥16.91T → ¥18.60T (16.91 × 1.10) |
 
+
 ## Deployment
 
 TODO: how you logged, registered, and served the model; endpoint name; URL.
@@ -67,15 +69,17 @@ TODO: graph architecture, routing, deployment choices.
 
 ### Task 1.3 — Supervisor
 1. Your supervisor makes a routing decision per step. What is the failure mode if it misroutes? How would you detect and recover from a misroute?
-   - TODO
+    - A misroute sends a step requent to a specialist that isnt designed for the task/ cannot do it. for eg, it sends document_loop to 'mcp_tools' could cause a failed tool call. This would be detected via the invalid tool call, empty retrieval results and tracing step answers till the problem node/tool call. theshpervisor will normalizeoutput on its end and send a fallback alert when output is invalid. 
+
 2. Compare this supervisor pattern with a single ReAct agent that has access to all tools. When is the supervisor pattern worth the added complexity?
-   - TODO
+   -  A single ReAct agent is simpler because one model decides which tool to call while reasoning through the entire request  however its behavior can  be less predictable when it has many tools or when a query requires multi step reasoning and different complex tasks.  The supervisor adds routing logic and additional LLM calls, but gives each specialist a focused responsibility and makes the execution path easier to debug and verify, the extra complexity is valid for a multi agent as querires need both lookup and computation.
+   
 
 ### Task 1.4 — RAG Agent
 1. The RAG agent retrieves for a single decomposed step, not the full user query. How does this affect retrieval quality compared to retrieving for the original question?
-   - TODO
+   - This improves precision as the query focuses on one single fact rather than doing both retrieval and calculation requirements of the whole query.  for a q like "find fy2023 revenue" is better than "find fy2023 revenue and the growth calculation" for getting a precise accurate answer. this way by modularizing rag retrieval in multi agent reasoning the LLM can handle more complex queries.
 2. If the planner produces a vague step like "find relevant financial data," how would you improve the retrieval query before sending it to the vector store?
-   - TODO
+   - Would rewrite step using more context from og question and previous steps/nodes. the addedinfo would include metrics, company info, units and doc metadata. would also add a specififc return type eg. return as an annual report pdf file ,focused specifically on the years []. this clarifies the input to llm
 
 ### Task 2.1 — Model Definition
 1. Why does `models-from-code` require a self-contained file? What breaks if you reference external state (e.g., a database running only on your laptop)?
