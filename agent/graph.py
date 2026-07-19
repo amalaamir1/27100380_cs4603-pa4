@@ -1,27 +1,35 @@
-"""Full Document Analyst graph (Tasks 1.5 + 1.7).
-
-TODO:
-  - `load_mcp_tools(server_path=None)`: connect the GIVEN MCP server over stdio
-    (see langchain-mcp-adapters) and return its tools.
-  - `make_mcp_node(tools, llm)`: execute one calculation step by letting the LLM
-    call exactly one MCP tool, then append the result and increment the index.
-  - `build_graph(llm=None, retriever=None, tools=None)`: assemble
-    planner -> supervisor -> {rag_agent | mcp_tools} -> ... -> synthesizer.
-    Inject dependencies so the graph can be unit-tested offline with fakes.
-"""
-
 from __future__ import annotations
+import asyncio
+import sys
+from pathlib import Path
+
+from langchain_core.messages import HumanMessage, SystemMessage
+from langchain_mcp_adapters.client import MultiServerMCPClient
+
+from agent.prompts import MCP_STEP_PROMPT
+from config import get_chat_llm
 
 from langgraph.graph import END, START, StateGraph
-
+from rag.store import get_retriever
 from agent.planner import make_planner
 from agent.rag_agent import make_rag_agent
 from agent.state import AnalystState
 from agent.supervisor import MCP, RAG, SYNTH, make_supervisor, route_from_supervisor
 from agent.synthesizer import make_synthesizer
 
+from concurrent.futures import ThreadPoolExecutor
 
+def _run_async_synchronously(coro):
+    """Run an async operation from regular Python, including inside notebooks."""
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        return asyncio.run(coro)
 
+    # A notebook event loop is already active, so use a separate thread.
+    with ThreadPoolExecutor(max_workers=1) as executor:
+        return executor.submit(asyncio.run, coro).result()
+    
 def load_mcp_tools(server_path: str | None = None):
     """Launch the bundled MCP server over stdio and load its tools once."""
     if server_path is None:
@@ -43,7 +51,7 @@ def load_mcp_tools(server_path: str | None = None):
     )
     # Graph construction is synchronous. Loading here ensures tool discovery occurs
     # once rather than starting a discovery session on every graph step.
-    return asyncio.run(client.get_tools())
+    return _run_async_synchronously(client.get_tools())
 
 
 def _message_text(message) -> str:
@@ -106,7 +114,15 @@ def make_mcp_node(tools, llm):
             raise ValueError(f"LLM selected an unknown MCP tool: {tool_name!r}")
 
         # Synchronous invocation is intentional for the bundled serving-container MCP.
-        tool_result = tools_by_name[tool_name].invoke(call.get("args", {}))
+        tool = tools_by_name[tool_name]
+        tool_args = call.get("args", {})
+
+        if hasattr(tool, "ainvoke"):
+            tool_result = _run_async_synchronously(
+                tool.ainvoke(tool_args)
+            )
+        else:
+            tool_result = tool.invoke(tool_args)
         result_text = _message_text(tool_result)
         if not result_text:
             result_text = "MCP tool returned no result"
@@ -120,9 +136,18 @@ def make_mcp_node(tools, llm):
 
 
 def build_graph(llm=None, retriever=None, tools=None):
-    """Task 1.7: full graph wiring is intentionally implemented later."""
- 
+    llm = llm or get_chat_llm()
+    retriever = retriever or get_retriever()
+    tools = tools if tools is not None else load_mcp_tools()
+
+    planner = make_planner(llm)
+    supervisor = make_supervisor(llm)
+    rag_agent = make_rag_agent(retriever, llm)
+    mcp_tools = make_mcp_node(tools, llm)
+    synthesizer = make_synthesizer(llm)
+
     builder = StateGraph(AnalystState)
+
     builder.add_node("planner", planner)
     builder.add_node("supervisor", supervisor)
     builder.add_node("rag_agent", rag_agent)
@@ -131,9 +156,17 @@ def build_graph(llm=None, retriever=None, tools=None):
 
     builder.add_edge(START, "planner")
     builder.add_edge("planner", "supervisor")
-    builder.add_conditional_edges("supervisor", route_from_supervisor)
+    builder.add_conditional_edges(
+        "supervisor",
+        route_from_supervisor,
+        {
+            RAG: "rag_agent",
+            MCP: "mcp_tools",
+            SYNTH: "synthesizer",
+        },
+    )
     builder.add_edge("rag_agent", "supervisor")
     builder.add_edge("mcp_tools", "supervisor")
     builder.add_edge("synthesizer", END)
 
-    graph = builder.compile()
+    return builder.compile()

@@ -1,12 +1,5 @@
-"""Vector Search retriever factory (Task 1.4 support / rag/store.py).
-
-TODO: Implement `get_retriever(k=4)` that returns a LangChain retriever over the
-Databricks Vector Search index built by `ingest.py`, using
-`DatabricksVectorSearch` from `databricks_langchain`. Read endpoint/index names
-from config.get_settings(). This exact retriever is reused by the deployed model.
-"""
-
-from __future__ import annotations
+from databricks.sdk import WorkspaceClient
+from databricks_langchain import DatabricksVectorSearch
 
 from config import get_settings
 
@@ -15,8 +8,20 @@ CITATION_COLUMNS = ["chunk_id", "source", "page"]
 
 
 def get_vector_store():
-    raise NotImplementedError("Task 1.4: return a DatabricksVectorSearch handle")
+    settings = get_settings()
 
+    workspace_client = WorkspaceClient(
+        host=settings["host"],
+        token=settings["token"],
+    )
+
+    return DatabricksVectorSearch(
+        index_name=settings["vs_index"],
+        workspace_client=workspace_client,
+        columns=CITATION_COLUMNS,
+    )
 
 def get_retriever(k: int = 4):
-    raise NotImplementedError("Task 1.4: return a top-k retriever over the index")
+    return get_vector_store().as_retriever(
+        search_kwargs={"k": k}
+    )

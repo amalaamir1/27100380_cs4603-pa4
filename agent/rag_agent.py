@@ -1,14 +1,9 @@
-"""RAG agent node (Task 1.4) — retrieves from Databricks Vector Search.
-
-TODO: Implement `make_rag_agent(retriever, llm)` returning a node that:
-  - retrieves top-k chunks for the current step,
-  - formats them with [source: file, p.N] citations,
-  - extracts a single cited fact via the LLM (or 'not found in documents'),
-  - appends the fact to step_results and increments current_step_index.
-Reuse `rag/store.py::get_retriever()` so local and deployed retrieval match.
-"""
-
 from __future__ import annotations
+from langchain_core.messages import HumanMessage, SystemMessage
+
+from agent.prompts import RAG_EXTRACT_PROMPT
+
+NOT_FOUND = "not found in documents"
 
 from agent.state import AnalystState
 

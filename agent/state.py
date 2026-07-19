@@ -1,5 +1,3 @@
-"""State schema for the Document Analyst graph (Task 1.1)."""
-
 from __future__ import annotations
 
 from typing import Annotated, TypedDict

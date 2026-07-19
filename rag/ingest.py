@@ -1,10 +1,3 @@
-"""Corpus ingestion into Databricks Vector Search (Task 0.3).
-
-Run this module from a Databricks notebook.  Document parsing and semantic
-chunking use Databricks SQL AI functions and therefore require Spark compute
-that supports ``ai_parse_document`` and ``ai_prep_search``.
-"""
-
 from __future__ import annotations
 
 import os

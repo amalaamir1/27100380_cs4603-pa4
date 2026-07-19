@@ -1,15 +1,9 @@
-"""Supervisor node + routing edge (Task 1.3).
-
-TODO:
-  - `make_supervisor(llm)`: if current_step_index >= len(plan) -> next_agent =
-    'synthesizer'; else classify the current step to 'rag_agent' or 'mcp_tools'.
-  - `route_from_supervisor(state)`: return state["next_agent"] for the
-    conditional edge.
-"""
-
 from __future__ import annotations
 
 from agent.state import AnalystState
+from langchain_core.messages import HumanMessage, SystemMessage
+
+from agent.prompts import SUPERVISOR_PROMPT
 
 RAG = "rag_agent"
 MCP = "mcp_tools"

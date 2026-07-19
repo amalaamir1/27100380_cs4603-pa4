@@ -83,9 +83,9 @@ TODO: graph architecture, routing, deployment choices.
 
 ### Task 2.1 — Model Definition
 1. Why does `models-from-code` require a self-contained file? What breaks if you reference external state (e.g., a database running only on your laptop)?
-   - TODO
+   - MLFlow stores model definition source and re excutes it inside a container, the container does not inherit the notebook variables or python objects or processes. therefore the model file must recreate the graph from importable code. if it references  external state such as a local database , the model may failduring endpoint startup or inference because the resource does not existin the serving environment of the model.
 2. Your model calls a managed Vector Search index at inference time rather than embedding documents into the container image. What are the tradeoffs (freshness, cold-start size, latency, failure modes) of querying an external index vs. baking the corpus into the model artifact?
-   - TODO
+   - using vector search index keeps the model artifact smaller, and allows document updates via index synchronization. the trandeoff is the num of of network calls and complexity, as every retrieval now has a network call and is dependent on the index, authentication and availability of the database.
 
 ### Task 2.3 — Serving Endpoint
 1. Why must you pass `DATABRICKS_TOKEN` as an environment variable to the endpoint, even though it's already authenticated to serve models?

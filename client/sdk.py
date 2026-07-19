@@ -1,15 +1,3 @@
-"""Python client SDK for the deployed Document Analyst (Part 3).
-
-TODO: Implement `DocumentAnalystClient` and `AnalystClientError` per Task 3.1:
-  - __init__(endpoint_name, host=None, token=None, timeout=120.0, max_retries=3):
-    read DATABRICKS_HOST/DATABRICKS_TOKEN from env when not provided.
-  - ask(question) -> str
-  - ask_streaming(question) -> Iterator[str]   (yield chunks as they arrive)
-  - health_check() -> bool                      (True only when endpoint READY)
-  - exponential backoff on 429/503, TimeoutError with elapsed time, and wrap HTTP
-    errors in AnalystClientError(status_code, message, request_id).
-"""
-
 from __future__ import annotations
 
 from collections.abc import Iterator

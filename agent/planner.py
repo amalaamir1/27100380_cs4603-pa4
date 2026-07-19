@@ -1,16 +1,12 @@
-"""Planner node (Task 1.2).
-
-TODO: Implement `make_planner(llm)` returning a node that:
-  - reads the user question from state["messages"],
-  - asks the LLM (PLANNER_PROMPT) for a JSON list of 2-5 steps,
-  - parses it robustly (fallback to a single step on parse failure),
-  - returns {"plan": [...], "current_step_index": 0, "step_results": []}.
-"""
-
 from __future__ import annotations
 
 from agent.state import AnalystState
+import json
+from typing import Any
 
+from langchain_core.messages import HumanMessage, SystemMessage
+
+from agent.prompts import PLANNER_PROMPT
 
       
 def _message_content(message: Any) -> str:
