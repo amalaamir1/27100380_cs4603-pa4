@@ -273,7 +273,7 @@ The GitHub Actions workflow completed successfully: lint passed, the offline
 smoke test passed, a new model version was registered, and the serving endpoint
 reached `READY`.
 
-![Successful Bonus A workflow](evidence/bonusA.png)
+![Successful Bonus A workflow](bonusA.png)
 
 1. Why should the deploy step only run on `main` and not on feature branches?
    - main is the reviewed source of code, feature branches may contrain incomplete or experimental data or conflicting changes, deplying from there could cause errors and allow different branches to run over each others deplyments. 
