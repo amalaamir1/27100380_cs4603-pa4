@@ -18,6 +18,7 @@ from agent.synthesizer import make_synthesizer
 from config import get_chat_llm
 from rag.store import get_retriever
 
+
 def _run_async_synchronously(coro):
     """Run an async operation from regular Python, including inside notebooks."""
     try:

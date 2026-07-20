@@ -7,6 +7,8 @@ from collections.abc import Iterator
 from typing import Any
 
 import requests
+
+
 class AnalystClientError(Exception):
     def __init__(self, message: str, status_code=None, request_id=None):
         super().__init__(message)
