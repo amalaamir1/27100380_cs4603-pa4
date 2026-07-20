@@ -267,10 +267,18 @@ I selected the simpler raw-state `mlflow.langchain.log_model` approach. It prese
    - streaming is useful in a interative chat software when the answer needs to be shown progressively. for eg ask is more appropriate when a caller needs one answer before the next, in a calculation. for a financial analysis app, this would be any point where LLM tool is performing calculations. otherwise, a scenerio where user wants a summary of a financial report, ask streaming is better as it shows the beginning text before it prints the final citatons etc, giving user a timely answer where user can see the thinking of the llm too.
 
 ### Bonus A — CI/CD (if attempted)
+## Execution evidence
+
+The GitHub Actions workflow completed successfully: lint passed, the offline
+smoke test passed, a new model version was registered, and the serving endpoint
+reached `READY`.
+
+![Successful Bonus A workflow](evidence/bonusA.png)
+
 1. Why should the deploy step only run on `main` and not on feature branches?
-   - TODO
+   - main is the reviewed source of code, feature branches may contrain incomplete or experimental data or conflicting changes, deplying from there could cause errors and allow different branches to run over each others deplyments. 
 2. What would you add to this pipeline to prevent deploying a model that performs worse than the current version? Describe the gate.
-   - TODO
+   - add an evaluation job in between testing and deployment that compares new model to current one. would run retrieval, calculation, combined, empty retrieval and citation queries and evaluation on precision correctness . using mflow. if model below threshold after comparison then it would not be deployed
 
 ### Bonus B — `databricks-agents` SDK (if attempted)
 1. Compare the `agents.deploy()` approach with the manual MLflow + CLI approach from Part 2. What control do you gain or lose with each?
