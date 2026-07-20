@@ -2,10 +2,10 @@ from __future__ import annotations
 from langchain_core.messages import HumanMessage, SystemMessage
 
 from agent.prompts import RAG_EXTRACT_PROMPT
-
+from agent.state import AnalystState
 NOT_FOUND = "not found in documents"
 
-from agent.state import AnalystState
+
 
 def format_docs(docs) -> str:
     """Format retrieved chunks with the citations required by the assignment."""
