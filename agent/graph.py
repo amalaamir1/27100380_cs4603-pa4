@@ -1,23 +1,22 @@
 from __future__ import annotations
+
 import asyncio
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_mcp_adapters.client import MultiServerMCPClient
-
-from agent.prompts import MCP_STEP_PROMPT
-from config import get_chat_llm
-
 from langgraph.graph import END, START, StateGraph
-from rag.store import get_retriever
+
 from agent.planner import make_planner
+from agent.prompts import MCP_STEP_PROMPT
 from agent.rag_agent import make_rag_agent
 from agent.state import AnalystState
 from agent.supervisor import MCP, RAG, SYNTH, make_supervisor, route_from_supervisor
 from agent.synthesizer import make_synthesizer
-
-from concurrent.futures import ThreadPoolExecutor
+from config import get_chat_llm
+from rag.store import get_retriever
 
 def _run_async_synchronously(coro):
     """Run an async operation from regular Python, including inside notebooks."""
