@@ -1,19 +1,14 @@
-"""Log and register the PA4 Document Analyst model (Task 2.2)."""
 from __future__ import annotations
-from databricks.sdk.service.serving import (
-    EndpointCoreConfigInput,
-    ServedEntityInput,
-)
+
 import os
 from datetime import timedelta
+from pathlib import Path
 
+import mlflow
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.errors import NotFound
-from databricks.sdk.service.serving import (
-    EndpointCoreConfigInput,
-    ServedEntityInput,
-    
-)
+from databricks.sdk.service.serving import EndpointCoreConfigInput, ServedEntityInput
+from mlflow.models import infer_signature
 
 PIP_REQUIREMENTS = [
     "mlflow>=2.16.0",
