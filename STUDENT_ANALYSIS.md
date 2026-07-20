@@ -282,9 +282,9 @@ reached `READY`.
 
 ### Bonus B — `databricks-agents` SDK (if attempted)
 1. Compare the `agents.deploy()` approach with the manual MLflow + CLI approach from Part 2. What control do you gain or lose with each?
-   - TODO
+   -  it exposes every deployment step: logging and registering the model, choosing the served-entity configuration, injecting secret references, creating or updating the endpoint,giving precise control over endpoint naming, env cars and debugging ,`agents.deploy()` keeps the same MLflow model-registration stage but replaces the manual serving-endpoint setup with one higher-level call. tradeoff is less direct control and visibility over the , or endpoint settings may still require the lower-level SDK.
 2. The Review App enables human feedback collection. How would you use this feedback to improve the agent over time? Describe a concrete feedback loop.
-   - TODO
+   - would collect ratings and comments for different query typesadd values to a regression dataset and find the weakest sector
 
 ### Bonus C — Standalone MCP server (if attempted)
 1. You moved the MCP server out of the model container. What did you gain (scaling, deployment, security, observability) and what new failure modes did you introduce (network, auth, latency, availability)?
