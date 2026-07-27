@@ -39,8 +39,7 @@ SELECT cs4603.default.to_billions(2400000000.0)
 
 A SQL function is preferable when the computation can be expressed using relational or scalar SQL operations. SQL functions can execute close to the data, support query optimization and pushdown, and do not require starting a separate Python runtime.
 evidence: sql function test result:
-![Pic 1 — UC function registration and execution](screenshots/pic1.png) ![Pic 2 — UC graph execution result](screenshots/pic2.png)
-
+![Pic 1 — UC function registration and execution](screenshots/pic1.png)
 ## 2. UC Function Testing
 
 I registered and successfully tested `growth_rate`, `percentage_change`, and `compare_values` in `cs4603.default`, confirming that each returned the expected scalar result.
@@ -73,4 +72,7 @@ How much did total revenue grow from FY2022 to FY2023?
 What were net revenue, operating profit, and net income in FY2023?
 ## 9. UC Model Deployment
 
-I successfully initiated deployment of model version 2 to `s27100380-document-analyst-uc`; the endpoint provisions asynchronously 
+I successfully initiated deployment of model version 2 to `s27100380-document-analyst-uc`; the endpoint provisions asynchronously
+
+![Chat 1](chat1.png)
+![Chat 2](chat2.png)
