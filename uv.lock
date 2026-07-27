@@ -2801,6 +2801,7 @@ dependencies = [
     { name = "mlflow" },
     { name = "openai" },
     { name = "python-dotenv" },
+    { name = "unitycatalog-ai" },
 ]
 
 [package.optional-dependencies]
@@ -2833,6 +2834,7 @@ requires-dist = [
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0.0" },
     { name = "python-dotenv", specifier = ">=1.0.0" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6.0" },
+    { name = "unitycatalog-ai", specifier = ">=0.3.2" },
 ]
 provides-extras = ["dev", "agents"]
 
